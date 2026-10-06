@@ -164,7 +164,7 @@ details summary { cursor: pointer; color: var(--ink-2); font-size: .85rem; margi
     const limit = num((rows("settings")[0] || [])[0]) || 200;
     const spoilLimit = num((rows("settings")[1] || [])[0]) || 0.04;
     const M = {};
-    const get = (k) => M[k] || (M[k] = { Main: blank(), Rizal: blank(), purchases: 0, kg: 0, trucking: 0, days: {} });
+    const get = (k) => M[k] || (M[k] = { Main: blank(), Rizal: blank(), purchases: 0, kg: 0, trucking: 0, draw: 0, days: {} });
     function blank() { return { retail: 0, wholesale: 0, spoil: 0, cash: 0, reported: 0, short: 0, over: 0, opex: 0, staff: 0, lakSold: 0 }; }
     for (const r of rows("daily")) {
       const d = parseDate(r[0]); const b = (r[1] || "").trim();
@@ -181,6 +181,7 @@ details summary { cursor: pointer; color: var(--ink-2); font-size: .85rem; margi
       const b = (r[1] || "").trim(), cat = (r[2] || "").trim(), amt = num(r[4]);
       const m = get(mkey(d));
       if (cat === "Trucking & Labor") { m.trucking += amt; continue; }
+      if (cat === "Owner draw (personal)") { m.draw += amt; continue; }
       if (b === "Main" || b === "Rizal") {
         m[b].opex += amt;
         if (cat === "Salary (net paid)" || cat === "Cash Advance") m[b].staff += amt;
@@ -274,6 +275,7 @@ details summary { cursor: pointer; color: var(--ink-2); font-size: .85rem; margi
         <tr><td>Trucking and labor</td><td class="num">${peso(m.trucking)}</td></tr>
         <tr><td>Stock at start / end</td><td class="num">${peso(m.stockStart)} / ${peso(m.stockEnd)}</td></tr>
         <tr class="em"><td>Cost of fruit sold</td><td class="num">${peso(m.cogs)}</td></tr>
+        <tr><td>Owner draw (not a store cost)</td><td class="num">${peso(m.draw)}</td></tr>
         <tr><td>Landed cost per kg</td><td class="num">${m.kg ? "₱" + ((m.purchases + m.trucking) / m.kg).toFixed(2) : "add kg to deliveries"}</td></tr>
       </table></div></section>
       <section class="panel"><div class="panel-head"><h2>Needs attention</h2><span class="note">Limits from the Settings tab</span></div>
